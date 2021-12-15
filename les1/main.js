@@ -1,25 +1,31 @@
 // 1
 
 
-const cutString = (str, max) => {
-    return str.length <= max ? str : str.slice(0, max) + '...';
+const cutString = (text, avaliableChars) => {
+    if(text.length <= avaliableChars) {
+        return text;
+    }
+    return text.slice(0, avaliableChars) + '...';
 };
 
-console.log(cutString('foo', 2));
+console.log(cutString('helppppp', 5));
 
 // 2
 
-const arr = [4,4,4,4,44,4,2,2,2,2,2,3];
+const arrOfNumbers = [1, 2, 3, 3];
 
-const repeatVal = (arr) => {
-    const obj = arr.reduce((acc, n) => (
-        acc[n] = (acc[n] || 0) + 1, acc
+const fndMostFrequentNum = (numberList) => {
+    const numMeetingMap = numberList.reduce((result, num) => (
+        result[num] = (result[num] || 0) + 1, result
     ), {});
-    const count = Object.values(obj).map(num => +num);
-    return Math.max.apply(Math, count);
+
+    return +Object.keys(numMeetingMap).reduce((result, key) => {
+        return numMeetingMap[result] > numMeetingMap[key] ? result : key;
+    });
+
 };
 
-console.log(repeatVal(arr));
+console.log(fndMostFrequentNum(arrOfNumbers));
 
 
 // 3
@@ -27,7 +33,7 @@ console.log(repeatVal(arr));
 
 const mass = ['hello', 1, false]
 
-const convertMassIntoObj = (arr) => {
+const getMassItemInfo = (arr) => {
     return arr.map((item, index) => ({
         value: item,
         type: typeof item,
@@ -35,7 +41,7 @@ const convertMassIntoObj = (arr) => {
     }));
 };
 
-console.log(convertMassIntoObj(mass));
+console.log(getMassItemInfo(mass));
 
 
 // 4
@@ -61,28 +67,27 @@ const users = [
 ];
   
 
-const sortUsers = (arr) => {
-    let men = [];
-    let women = [];
+const sortUsersByGender = (users) => {
 
-    arr.forEach(user => {
-        const {first_name, last_name, ...newUser} = user;
+    return users.reduce((result, user) => {
+        const {first_name, last_name, ...otherProps} = user;
+        
+        const modifiedUser = {
+            fullName: `${first_name} ${last_name}`,
+            ...otherProps
+        };
 
-        newUser.fullName = first_name + ' ' + last_name;
+        const placeToPush = modifiedUser.gender === 'male' ? 'men' : 'women';
 
-        if(user.gender === 'male') {
-            men.push(newUser);
-        } else {
-            women.push(newUser);
-        }
+        result[placeToPush].push(modifiedUser);
+        
+        return result;
+        
+    }, {men: [], women: []});
 
-        return newUser;
-    });
-
-    return {men, women};
 };
 
-console.log(sortUsers(users));
+console.log(sortUsersByGender(users));
 
 
 // 5
@@ -102,9 +107,9 @@ const videos = [{
     title: "Bad Boys"
 }];
 
-const massToObj = (arr) => {
-    return arr.reduce((acc, item) => (
-        acc[item.id] = item.title, acc
+const massToObj = (mass) => {
+    return mass.reduce((result, item) => (
+        result[item.id] = item.title, result
     ), {});
 };
 
@@ -144,8 +149,11 @@ const newReleases = [{
     bookmark: [{ id: 432534, time: 65876586 }]
 }];
 
-const ratingMoreThan5 = (arr) => {
-    return arr.filter(item => item.rating[0] === 5.0).map(item => item.id);
+const ratingMoreThan5 = (releases) => {
+    return releases.reduce((result, release) => {
+        release.rating[0] === 5.0 ? result.push(release.id) : null;
+        return result;
+    }, []);
 };
 
 console.log(ratingMoreThan5(newReleases));
@@ -177,16 +185,18 @@ const boxarts = [
     }
   ];
 
-  const maxSquare = (arr) => {
-      return arr.map(item => ({
-          square: item.width * item.height,
-          ...item
-      })).reduce((acc, item) => {
-         return acc.square > item.square ? acc : item.url; 
-      })
+  const maxSquareUrl = (boxarts) => {
+
+    return boxarts.reduce((previousImage, currentImage) => {
+
+        const currentSquare =  currentImage.width * currentImage.height;
+        const previousSquare = previousImage.width * previousImage.height;
+
+        return previousSquare > currentSquare ? previousImage : currentImage; 
+    }).url;
   };
 
-  console.log(maxSquare(boxarts));
+  console.log(maxSquareUrl(boxarts));
 
 
    
